@@ -5,6 +5,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StockInController;
+use App\Http\Controllers\StockOutController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -25,6 +27,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Semua role: melihat barang
     Route::get('/barang', [ProductController::class, 'index'])->name('products.index');
+
+    // Semua role: mencatat dan melihat riwayat barang masuk/keluar
+    // (/tambah harus sebelum /{...})
+    Route::get('/barang-masuk', [StockInController::class, 'index'])->name('stock-ins.index');
+    Route::get('/barang-masuk/tambah', [StockInController::class, 'create'])->name('stock-ins.create');
+    Route::post('/barang-masuk', [StockInController::class, 'store'])->name('stock-ins.store');
+    Route::get('/barang-masuk/{stockIn}', [StockInController::class, 'show'])->name('stock-ins.show');
+
+    Route::get('/barang-keluar', [StockOutController::class, 'index'])->name('stock-outs.index');
+    Route::get('/barang-keluar/tambah', [StockOutController::class, 'create'])->name('stock-outs.create');
+    Route::post('/barang-keluar', [StockOutController::class, 'store'])->name('stock-outs.store');
+    Route::get('/barang-keluar/{stockOut}', [StockOutController::class, 'show'])->name('stock-outs.show');
 
     // Hanya admin
     Route::middleware('role:admin')->group(function () {
