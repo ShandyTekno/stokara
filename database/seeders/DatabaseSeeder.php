@@ -23,5 +23,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Karyawan Demo',
             'email' => 'karyawan@stokcerdas.test',
         ]);
+
+        $this->call(DemoCatalogSeeder::class);
     }
 }

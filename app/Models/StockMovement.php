@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\StockMovementType;
+use App\Models\Concerns\BelongsToStore;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
+class StockMovement extends Model
+{
+    use HasFactory, BelongsToStore;
+
+    protected $fillable = [
+        'product_id', 'user_id', 'type', 'quantity_change',
+        'stock_before', 'stock_after', 'reference_type', 'reference_id', 'notes',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'type' => StockMovementType::class,
+            'quantity_change' => 'integer',
+            'stock_before' => 'integer',
+            'stock_after' => 'integer',
+        ];
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class)->withTrashed();
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function reference(): MorphTo
+    {
+        return $this->morphTo();
+    }
+}
