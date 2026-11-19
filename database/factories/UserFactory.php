@@ -34,4 +34,9 @@ class UserFactory extends Factory
     {
         return $this->state(fn () => ['email_verified_at' => null]);
     }
+
+    public function inactive(): static
+    {
+        return $this->state(fn () => ['is_active' => false]);
+    }
 }

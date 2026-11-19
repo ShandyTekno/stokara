@@ -1,7 +1,8 @@
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 
 defineProps({
     canResetPassword: Boolean,
@@ -13,6 +14,9 @@ const form = useForm({
     password: '',
     remember: false,
 });
+
+const page = usePage();
+const sessionError = computed(() => page.props.errors?.email);
 
 const submit = () => {
     form.post(route('login'), {
@@ -37,7 +41,7 @@ const submit = () => {
                 <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                 <input id="email" v-model="form.email" type="email" required autofocus autocomplete="username"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-800 focus:ring-blue-800" />
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError class="mt-2" :message="form.errors.email || sessionError" />
             </div>
 
             <div>

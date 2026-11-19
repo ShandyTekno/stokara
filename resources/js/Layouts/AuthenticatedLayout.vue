@@ -24,7 +24,8 @@ const menu = [
     { label: 'AI Assistant', route: 'ai.assistant', pattern: 'ai.assistant*', icon: 'chat', adminOnly: true },
     { label: 'Analisis AI', route: 'ai.analysis', pattern: 'ai.analysis*', icon: 'sparkles', adminOnly: true },
     { label: 'Laporan', route: 'reports.index', pattern: 'reports.*', icon: 'document', adminOnly: true },
-    { label: 'Pengguna', route: 'users.index', pattern: 'users.*', icon: 'users', adminOnly: true, soon: true },
+    { label: 'Pengguna', route: 'users.index', pattern: 'users.*', icon: 'users', adminOnly: true },
+    { label: 'Aktivitas', route: 'activities.index', pattern: 'activities.*', icon: 'clock', adminOnly: true },
 ];
 
 const visibleMenu = computed(() =>

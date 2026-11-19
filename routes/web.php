@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -22,13 +26,40 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Semua role: melihat barang
     Route::get('/barang', [ProductController::class, 'index'])->name('products.index');
 
-    // Hanya admin: mengelola barang (harus sebelum /barang/{product})
+    // Hanya admin
     Route::middleware('role:admin')->group(function () {
+        // Barang (harus sebelum /barang/{product})
         Route::get('/barang/tambah', [ProductController::class, 'create'])->name('products.create');
         Route::post('/barang', [ProductController::class, 'store'])->name('products.store');
         Route::get('/barang/{product}/ubah', [ProductController::class, 'edit'])->name('products.edit');
         Route::put('/barang/{product}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/barang/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+        // Kategori
+        Route::get('/kategori', [CategoryController::class, 'index'])->name('categories.index');
+        Route::post('/kategori', [CategoryController::class, 'store'])->name('categories.store');
+        Route::put('/kategori/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/kategori/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+        // Pemasok (/tambah sebelum /{supplier})
+        Route::get('/pemasok', [SupplierController::class, 'index'])->name('suppliers.index');
+        Route::get('/pemasok/tambah', [SupplierController::class, 'create'])->name('suppliers.create');
+        Route::post('/pemasok', [SupplierController::class, 'store'])->name('suppliers.store');
+        Route::get('/pemasok/{supplier}', [SupplierController::class, 'show'])->name('suppliers.show');
+        Route::get('/pemasok/{supplier}/ubah', [SupplierController::class, 'edit'])->name('suppliers.edit');
+        Route::put('/pemasok/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
+        Route::delete('/pemasok/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+
+        // Manajemen pengguna
+        Route::get('/pengguna', [UserController::class, 'index'])->name('users.index');
+        Route::get('/pengguna/tambah', [UserController::class, 'create'])->name('users.create');
+        Route::post('/pengguna', [UserController::class, 'store'])->name('users.store');
+        Route::get('/pengguna/{user}/ubah', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/pengguna/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::patch('/pengguna/{user}/status', [UserController::class, 'toggle'])->name('users.toggle');
+
+        // Aktivitas pengguna
+        Route::get('/aktivitas', ActivityController::class)->name('activities.index');
     });
 
     Route::get('/barang/{product}', [ProductController::class, 'show'])->name('products.show');
@@ -38,12 +69,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-// Placeholder halaman khusus admin; diganti Manajemen Pengguna di Tahap 5.
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/pengguna', fn () => 'Halaman khusus admin (placeholder)')
-        ->name('users.index');
 });
 
 require __DIR__.'/auth.php';
