@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockInController;
 use App\Http\Controllers\StockOutController;
 use App\Http\Controllers\SupplierController;
@@ -39,6 +40,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/barang-keluar/tambah', [StockOutController::class, 'create'])->name('stock-outs.create');
     Route::post('/barang-keluar', [StockOutController::class, 'store'])->name('stock-outs.store');
     Route::get('/barang-keluar/{stockOut}', [StockOutController::class, 'show'])->name('stock-outs.show');
+
+    // Semua role: kasir dan riwayat penjualan (/tambah sebelum /{sale})
+    Route::get('/penjualan', [SaleController::class, 'index'])->name('sales.index');
+    Route::get('/penjualan/tambah', [SaleController::class, 'create'])->name('sales.create');
+    Route::post('/penjualan', [SaleController::class, 'store'])->name('sales.store');
+    Route::get('/penjualan/{sale}', [SaleController::class, 'show'])->name('sales.show');
 
     // Hanya admin
     Route::middleware('role:admin')->group(function () {

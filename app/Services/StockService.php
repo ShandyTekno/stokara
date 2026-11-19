@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Enums\PaymentMethod;
 use App\Enums\StockMovementType;
 use App\Enums\StockOutReason;
 use App\Models\Product;
+use App\Models\Sale;
+use App\Models\SaleDetail;
 use App\Models\StockIn;
 use App\Models\StockInDetail;
 use App\Models\StockMovement;
@@ -22,6 +25,9 @@ class StockService
 {
     /** Batas stok per barang, jauh di bawah batas kolom INT UNSIGNED MySQL. */
     public const MAX_STOCK = 2_000_000_000;
+
+    /** Batas total transaksi penjualan (kolom DECIMAL(15,2)). */
+    public const MAX_SALE_TOTAL = 9_999_999_999_999;
 
     /**
      * Mencatat barang masuk. Atomik: gagal di satu baris membatalkan semuanya.
@@ -162,6 +168,100 @@ class StockService
         });
     }
 
+    /**
+     * Mencatat penjualan. Harga diambil dari database (bukan dari klien). Atomik.
+     *
+     * @param  array{payment_method: string, amount_paid?: mixed, notes?: ?string, items: array<int, array{product_id: int, quantity: int}>}  $data
+     */
+    public function recordSale(array $data, User $user): Sale
+    {
+        return DB::transaction(function () use ($data, $user) {
+            $storeId = $user->store_id;
+            $now = now();
+            $method = PaymentMethod::from($data['payment_method']);
+
+            $this->lockStore($storeId);
+            $products = $this->lockProducts($data['items'], $storeId);
+
+            $sale = $this->persist(new Sale([
+                'user_id' => $user->id,
+                'invoice_number' => $this->nextNumber(Sale::class, 'INV', $storeId, $now, 'invoice_number'),
+                'sold_at' => $now,
+                'total_amount' => 0,
+                'amount_paid' => 0,
+                'change_amount' => 0,
+                'payment_method' => $method,
+                'notes' => $data['notes'] ?? null,
+            ]), $storeId);
+
+            $total = 0.0;
+
+            foreach (array_values($data['items']) as $i => $item) {
+                /** @var Product $product */
+                $product = $products[(int) $item['product_id']];
+                $quantity = (int) $item['quantity'];
+                $before = (int) $product->stock; // stok terkini, sudah terkunci
+
+                if ($quantity > $before) {
+                    throw ValidationException::withMessages([
+                        "items.$i.quantity" => "Stok “{$product->name}” tidak mencukupi. Tersedia {$before} {$product->unit}, diminta {$quantity}.",
+                    ]);
+                }
+
+                $unitPrice = (float) $product->selling_price; // snapshot harga jual
+                $unitCost = (float) $product->purchase_price; // snapshot harga beli
+                $subtotal = round($unitPrice * $quantity, 2);
+                $total = round($total + $subtotal, 2);
+
+                if ($total > self::MAX_SALE_TOTAL) {
+                    throw ValidationException::withMessages([
+                        "items.$i.quantity" => 'Total transaksi melebihi batas maksimum.',
+                    ]);
+                }
+
+                $this->persist(new SaleDetail([
+                    'sale_id' => $sale->id,
+                    'product_id' => $product->id,
+                    'quantity' => $quantity,
+                    'unit_price' => $unitPrice,
+                    'unit_cost' => $unitCost,
+                    'subtotal' => $subtotal,
+                ]), $storeId);
+
+                $after = $before - $quantity;
+                $product->stock = $after;
+                $product->save();
+
+                $this->recordMovement(
+                    $product, $user, StockMovementType::Sale, -$quantity, $before, $after,
+                    $sale, "Penjualan {$sale->invoice_number}",
+                );
+            }
+
+            if ($method === PaymentMethod::Tunai) {
+                $paid = round((float) ($data['amount_paid'] ?? 0), 2);
+
+                if ($paid < $total) {
+                    throw ValidationException::withMessages([
+                        'amount_paid' => 'Uang diterima kurang dari total belanja (Rp '.number_format($total, 0, ',', '.').').',
+                    ]);
+                }
+
+                $change = round($paid - $total, 2);
+            } else {
+                $paid = $total; // QRIS: dibayar pas
+                $change = 0.0;
+            }
+
+            $sale->total_amount = $total;
+            $sale->amount_paid = $paid;
+            $sale->change_amount = $change;
+            $sale->save();
+
+            return $sale;
+        });
+    }
+
     /** Kunci baris toko agar penomoran transaksi tidak bisa kembar. Selalu dipanggil sebelum lockProducts. */
     private function lockStore(int $storeId): void
     {
@@ -195,14 +295,14 @@ class StockService
         return $products;
     }
 
-    private function nextNumber(string $modelClass, string $prefix, int $storeId, Carbon $date): string
+    private function nextNumber(string $modelClass, string $prefix, int $storeId, Carbon $date, string $column = 'transaction_number'): string
     {
         $base = $prefix.'-'.$date->format('Ymd').'-';
 
         $last = $modelClass::withoutGlobalScopes()
             ->where('store_id', $storeId)
-            ->where('transaction_number', 'like', $base.'%')
-            ->max('transaction_number');
+            ->where($column, 'like', $base.'%')
+            ->max($column);
 
         $sequence = $last ? ((int) substr($last, -4)) + 1 : 1;
 

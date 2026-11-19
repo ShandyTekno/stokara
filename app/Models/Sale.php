@@ -15,7 +15,8 @@ class Sale extends Model
 
     protected $fillable = [
         'user_id', 'invoice_number', 'sold_at',
-        'total_amount', 'payment_method', 'notes',
+        'total_amount', 'amount_paid', 'change_amount',
+        'payment_method', 'notes',
     ];
 
     protected function casts(): array
@@ -23,6 +24,8 @@ class Sale extends Model
         return [
             'sold_at' => 'datetime',
             'total_amount' => 'decimal:2',
+            'amount_paid' => 'decimal:2',
+            'change_amount' => 'decimal:2',
             'payment_method' => PaymentMethod::class,
         ];
     }

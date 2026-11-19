@@ -46,7 +46,7 @@ const roleLabel = computed(() => (isAdmin.value ? 'Admin / Pemilik' : 'Karyawan'
 
         <aside
             :class="[
-                'fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-blue-900 text-white transition-transform duration-200 lg:translate-x-0',
+                'fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-blue-900 text-white transition-transform duration-200 lg:translate-x-0 print:hidden',
                 sidebarOpen ? 'translate-x-0' : '-translate-x-full',
             ]"
         >
@@ -92,8 +92,8 @@ const roleLabel = computed(() => (isAdmin.value ? 'Admin / Pemilik' : 'Karyawan'
             </div>
         </aside>
 
-        <div class="lg:pl-64">
-            <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b bg-white px-4 sm:px-6">
+        <div class="lg:pl-64 print:pl-0">
+            <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b bg-white px-4 sm:px-6 print:hidden">
                 <button type="button" class="rounded-md p-2 text-gray-600 hover:bg-gray-100 lg:hidden" @click="sidebarOpen = true">
                     <NavIcon name="menu" class="h-6 w-6" />
                 </button>
