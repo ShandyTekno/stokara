@@ -24,4 +24,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Placeholder halaman khusus admin; diganti Manajemen Pengguna di tahap berikutnya.
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/pengguna', fn () => 'Halaman khusus admin (placeholder)')
+        ->name('users.index');
+});
+
 require __DIR__.'/auth.php';
