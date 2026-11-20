@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\AiAssistantController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MonitoringController;
@@ -94,6 +95,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/laporan/{type}', [ReportController::class, 'show'])->name('reports.show')->whereIn('type', $reportTypes);
         Route::get('/laporan/{type}/pdf', [ReportController::class, 'pdf'])->name('reports.pdf')->whereIn('type', $reportTypes);
         Route::get('/laporan/{type}/excel', [ReportController::class, 'excel'])->name('reports.excel')->whereIn('type', $reportTypes);
+
+        // AI Stock Assistant (/kirim sebelum /{conversation})
+        Route::get('/asisten-ai', [AiAssistantController::class, 'index'])->name('ai.assistant');
+        Route::post('/asisten-ai/kirim', [AiAssistantController::class, 'send'])->name('ai.assistant.send');
+        Route::get('/asisten-ai/{conversation}', [AiAssistantController::class, 'show'])->name('ai.assistant.show');
+        Route::delete('/asisten-ai/{conversation}', [AiAssistantController::class, 'destroy'])->name('ai.assistant.destroy');
     });
 
     Route::get('/barang/{product}', [ProductController::class, 'show'])->name('products.show');
