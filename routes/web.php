@@ -3,13 +3,16 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockInController;
 use App\Http\Controllers\StockOutController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
+use App\Services\ReportService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,6 +50,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/penjualan', [SaleController::class, 'store'])->name('sales.store');
     Route::get('/penjualan/{sale}', [SaleController::class, 'show'])->name('sales.show');
 
+    // Semua role: monitoring stok
+    Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
+
     // Hanya admin
     Route::middleware('role:admin')->group(function () {
         // Barang (harus sebelum /barang/{product})
@@ -81,6 +87,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Aktivitas pengguna
         Route::get('/aktivitas', ActivityController::class)->name('activities.index');
+
+        // Laporan
+        $reportTypes = array_keys(ReportService::TYPES);
+        Route::get('/laporan', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('/laporan/{type}', [ReportController::class, 'show'])->name('reports.show')->whereIn('type', $reportTypes);
+        Route::get('/laporan/{type}/pdf', [ReportController::class, 'pdf'])->name('reports.pdf')->whereIn('type', $reportTypes);
+        Route::get('/laporan/{type}/excel', [ReportController::class, 'excel'])->name('reports.excel')->whereIn('type', $reportTypes);
     });
 
     Route::get('/barang/{product}', [ProductController::class, 'show'])->name('products.show');

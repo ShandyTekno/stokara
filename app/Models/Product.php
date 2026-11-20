@@ -97,4 +97,14 @@ class Product extends Model
     {
         return $query->where('stock', 0);
     }
+
+    public function scopeFilterStatus(Builder $query, ?string $status): Builder
+    {
+        return match ($status) {
+            'habis' => $query->where('stock', '<=', 0),
+            'menipis' => $query->where('stock', '>', 0)->whereColumn('stock', '<=', 'min_stock'),
+            'aman' => $query->where('stock', '>', 0)->whereColumn('stock', '>', 'min_stock'),
+            default => $query,
+        };
+    }
 }
