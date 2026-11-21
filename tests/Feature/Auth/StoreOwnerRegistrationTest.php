@@ -66,4 +66,14 @@ class StoreOwnerRegistrationTest extends TestCase
             User::where('email', 'siti@example.com')->value('store_id'),
         );
     }
+
+    public function test_registration_is_rate_limited(): void
+    {
+        for ($i = 1; $i <= 6; $i++) {
+            $this->post('/register', $this->payload(['email' => "pemilik{$i}@example.com"]));
+            auth()->logout(); // tanpa ini, middleware guest mengalihkan sebelum pembatasan laju dihitung
+        }
+
+        $this->post('/register', $this->payload(['email' => 'pemilik7@example.com']))->assertStatus(429);
+    }
 }

@@ -4,6 +4,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { formatNumber, formatRupiah } from '@/utils/format';
 
 defineProps({ sale: Object, store: Object });
+
+const printReceipt = () => window.print();
 </script>
 
 <template>
@@ -18,7 +20,7 @@ defineProps({ sale: Object, store: Object });
             <div class="flex items-center justify-between print:hidden">
                 <Link :href="route('sales.index')" class="text-sm text-blue-800 hover:underline">← Kembali ke daftar</Link>
                 <div class="flex gap-2">
-                    <button type="button" class="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" @click="() => window.print()">
+                    <button type="button" class="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" @click="printReceipt">
                         Cetak struk
                     </button>
                     <Link :href="route('sales.create')" class="rounded-md bg-blue-900 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800">

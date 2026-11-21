@@ -139,7 +139,7 @@ function confirmDelete() {
                     </div>
                 </aside>
 
-                <section class="flex h-[calc(100vh-15rem)] min-h-[28rem] flex-col rounded-xl bg-white shadow-sm lg:col-span-3">
+                <section class="flex h-[calc(100dvh-15rem)] min-h-[28rem] flex-col rounded-xl bg-white shadow-sm lg:col-span-3">
                     <div ref="scroller" class="flex-1 space-y-4 overflow-y-auto p-4 sm:p-6">
                         <div v-if="!messages.length && !pending" class="mx-auto max-w-xl py-6 text-center">
                             <h3 class="text-lg font-semibold text-blue-900">Tanya apa saja tentang stok toko Anda</h3>

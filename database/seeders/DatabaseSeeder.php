@@ -10,6 +10,12 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction()) {
+            $this->command?->warn('Seeder demo dilewati di production (akun demo berkata sandi "password").');
+
+            return;
+        }
+
         $store = Store::factory()->create(['name' => 'Toko Sembako Demo']);
 
         User::factory()->create([
