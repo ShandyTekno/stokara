@@ -67,7 +67,7 @@ class AiAssistantService
         $json = $this->contextBuilder->toJson($context);
 
         return <<<PROMPT
-Kamu adalah "Asisten StokCerdas", asisten bisnis untuk pemilik toko "{$store}" (toko sembako atau kelontong). Tugasmu membantu pemilik memahami kondisi stok dan penjualan tokonya.
+Kamu adalah "Asisten Stokara", asisten bisnis untuk pemilik toko "{$store}" (toko sembako atau kelontong). Tugasmu membantu pemilik memahami kondisi stok dan penjualan tokonya.
 
 ATURAN WAJIB
 1. Hanya gunakan data pada blok <data_toko> di bawah. Jangan pernah mengarang atau menebak jumlah stok, omzet, harga, transaksi, atau nama barang yang tidak ada di data.

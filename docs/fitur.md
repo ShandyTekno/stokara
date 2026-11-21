@@ -1,6 +1,6 @@
-# Dokumentasi Fitur StokCerdas AI
+# Dokumentasi Fitur STOKARA
 
-Dokumen ini menjelaskan alur kerja, logika bisnis, dan aturan teknis dari seluruh modul yang ada pada aplikasi **StokCerdas AI**.
+Dokumen ini menjelaskan alur kerja, logika bisnis, dan aturan teknis dari seluruh modul yang ada pada aplikasi **STOKARA** (Sistem Manajemen Bisnis UMKM).
 
 ---
 

@@ -1,4 +1,4 @@
-# Dokumentasi Database StokCerdas AI
+# Dokumentasi Database STOKARA
 
 Semua tabel bisnis memiliki `store_id` agar data antar toko tidak tercampur.
 Stok disimpan dalam satuan terkecil (`products.unit`); kemasan dikonversi lewat

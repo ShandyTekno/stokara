@@ -21,13 +21,13 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'store_id' => $store->id,
             'name' => 'Pemilik Demo',
-            'email' => 'admin@stokcerdas.test',
+            'email' => 'admin@stokara.test',
         ]);
 
         User::factory()->karyawan()->create([
             'store_id' => $store->id,
             'name' => 'Karyawan Demo',
-            'email' => 'karyawan@stokcerdas.test',
+            'email' => 'karyawan@stokara.test',
         ]);
 
         $this->call(DemoCatalogSeeder::class);

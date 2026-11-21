@@ -1,7 +1,11 @@
 # Product Requirements Document (PRD)
-## StokCerdas AI — Sistem Manajemen Persediaan & Kasir Pintar Berbasis AI
+## STOKARA — Sistem Manajemen Bisnis UMKM
+### Kelola Stok, Kendalikan Bisnis.
+*Inventory Management · POS · Business Intelligence · AI Assistant*
 
 - **Versi Produk**: 1.0.0
+- **Nama Produk**: STOKARA (Stokara)
+- **Kategori**: Sistem Manajemen Bisnis UMKM
 - **Status Dokumen**: Final (Production Ready)
 - **Target Pengguna**: Pemilik Toko Retail, UMKM Sembako/Kelontong, Kasir, dan Pengelola Gudang
 
@@ -20,7 +24,7 @@ Banyak pemilik toko kelontong dan UMKM retail menghadapi tantangan operasional h
 
 ## 2. Visi & Tujuan Produk
 
-**StokCerdas AI** dirancang sebagai solusi persediaan dan Point of Sale (POS) modern yang menggabungkan:
+**STOKARA** dirancang sebagai solusi persediaan dan Point of Sale (POS) modern yang menggabungkan:
 - Kecepatan dan kemudahan sistem POS kasir harian.
 - Akurasi buku besar mutasi stok otomatis dengan konversi kemasan multi-satuan.
 - Kecerdasan buatan (**Google Gemini AI**) sebagai konsultan virtual toko yang mampu menjawab pertanyaan bisnis, memproyeksikan sisa hari persediaan, dan menyusun saran restock secara otomatis.

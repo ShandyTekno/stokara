@@ -1,6 +1,6 @@
-# Panduan Instalasi & Deployment StokCerdas AI
+# Panduan Instalasi & Deployment STOKARA
 
-Dokumen ini memandu langkah-langkah instalasi, konfigurasi lingkungan, pengujian, serta persiapan deployment produksi untuk aplikasi **StokCerdas AI**.
+Dokumen ini memandu langkah-langkah instalasi, konfigurasi lingkungan, pengujian, serta persiapan deployment produksi untuk aplikasi **STOKARA** (Sistem Manajemen Bisnis UMKM).
 
 ---
 
@@ -23,8 +23,8 @@ Sebelum memulai instalasi, pastikan sistem komputer/server Anda telah terpasang:
 
 ### Langkah 1: Klon Repositori
 ```bash
-git clone https://github.com/username/stokcerdas-ai.git
-cd stokcerdas-ai
+git clone https://github.com/username/stokara.git
+cd stokara
 ```
 
 ### Langkah 2: Pasang Dependensi Backend (Composer)
@@ -65,11 +65,11 @@ Buka berkas `.env`:
   DB_CONNECTION=mysql
   DB_HOST=127.0.0.1
   DB_PORT=3306
-  DB_DATABASE=stokcerdas_ai
+  DB_DATABASE=stokara
   DB_USERNAME=root
   DB_PASSWORD=
   ```
-  *(Pastikan database `stokcerdas_ai` sudah dibuat di MySQL).*
+  *(Pastikan database sudah dibuat di MySQL).*
 
 ### Langkah 6: Jalankan Migrasi & Seeder Data Demo
 ```bash
@@ -78,8 +78,8 @@ php artisan migrate --seed
 Perintah ini akan membuat semua struktur tabel dan mengisi data awal berupa akun toko demo dan katalog sembako.
 
 Akun demo bawaan:
-- **Admin**: `admin@stokcerdas.test` (password: `password`)
-- **Karyawan**: `karyawan@stokcerdas.test` (password: `password`)
+- **Admin**: `admin@stokara.test` (password: `password`)
+- **Karyawan**: `karyawan@stokara.test` (password: `password`)
 
 ---
 

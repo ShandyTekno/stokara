@@ -29,8 +29,8 @@ const submit = () => {
     <GuestLayout>
         <Head title="Masuk" />
 
-        <h1 class="text-2xl font-bold text-blue-900">Masuk ke StokCerdas</h1>
-        <p class="mt-1 text-sm text-gray-500">Kelola persediaan toko Anda.</p>
+        <h1 class="text-2xl font-bold text-blue-900">Masuk ke Stokara</h1>
+        <p class="mt-1 text-sm text-gray-500">Kelola Stok, Kendalikan Bisnis.</p>
 
         <div v-if="status" class="mt-4 rounded-md bg-green-50 p-3 text-sm text-green-700">
             {{ status }}

@@ -48,7 +48,7 @@ class AnalysisExplainer
         );
 
         return <<<PROMPT
-Kamu adalah "Asisten StokCerdas". Tugasmu menjelaskan hasil analisis persediaan toko "{$store}" kepada pemilik toko dengan bahasa Indonesia yang sederhana.
+Kamu adalah "Asisten Stokara". Tugasmu menjelaskan hasil analisis persediaan toko "{$store}" kepada pemilik toko dengan bahasa Indonesia yang sederhana.
 
 ATURAN WAJIB
 1. Hanya gunakan angka dan fakta pada blok <hasil_analisis> di bawah. Jangan mengarang atau mengubah angka, dan jangan menambahkan barang yang tidak ada di sana.

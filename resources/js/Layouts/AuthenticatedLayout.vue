@@ -55,7 +55,7 @@ const roleLabel = computed(() => (isAdmin.value ? 'Admin / Pemilik' : 'Karyawan'
                     <NavIcon name="box" class="h-5 w-5" />
                 </div>
                 <div class="min-w-0">
-                    <p class="font-semibold leading-tight">StokCerdas AI</p>
+                    <p class="font-semibold leading-tight">STOKARA</p>
                     <p class="truncate text-xs text-blue-200">{{ user.store?.name }}</p>
                 </div>
             </div>

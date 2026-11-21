@@ -96,8 +96,8 @@ class HardeningTest extends TestCase
     {
         (new DatabaseSeeder)->setContainer($this->app)->run();
 
-        $this->assertDatabaseHas('users', ['email' => 'admin@stokcerdas.test', 'role' => 'admin']);
-        $this->assertDatabaseHas('users', ['email' => 'karyawan@stokcerdas.test', 'role' => 'karyawan']);
+        $this->assertDatabaseHas('users', ['email' => 'admin@stokara.test', 'role' => 'admin']);
+        $this->assertDatabaseHas('users', ['email' => 'karyawan@stokara.test', 'role' => 'karyawan']);
         $this->assertDatabaseCount('products', 12);
     }
 

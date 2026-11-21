@@ -1,4 +1,6 @@
-# StokCerdas AI
+# STOKARA
+### Kelola Stok, Kendalikan Bisnis.
+*Inventory Management · POS · Business Intelligence · AI Assistant*
 
 [![PHP Version](https://img.shields.io/badge/PHP-8.3%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
@@ -8,7 +10,7 @@
 [![Tests Passing](https://img.shields.io/badge/Tests-248%20Passed-brightgreen)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**StokCerdas AI** adalah sistem manajemen inventaris, kasir (POS), dan analisis persediaan pintar berbasis web untuk toko dan UMKM retail. Dibangun dengan integrasi **Google Gemini AI**, aplikasi ini membantu pemilik toko memantau pergerakan stok, mengotomatisasi kasir, menghitung kebutuhan restock, serta berdialog langsung dengan asisten AI mengenai kondisi persediaan toko.
+**STOKARA** (Sistem Manajemen Bisnis UMKM) adalah platform manajemen persediaan, kasir (POS), dan analisis bisnis pintar berbasis web untuk toko dan UMKM retail. Dibangun dengan integrasi **Google Gemini AI**, Stokara membantu pemilik toko memantau pergerakan stok, mengotomatisasi kasir, menghitung kebutuhan restock, serta berdialog langsung dengan asisten AI mengenai kondisi persediaan toko.
 
 ---
 
@@ -44,8 +46,8 @@
 
 ### 1. Klon Repositori & Pasang Dependensi
 ```bash
-git clone https://github.com/username/stokcerdas-ai.git
-cd stokcerdas-ai
+git clone https://github.com/username/stokara.git
+cd stokara
 
 composer install
 npm install
@@ -64,8 +66,8 @@ Jalankan migrasi database beserta seeder katalog demo:
 php artisan migrate --seed
 ```
 *Seeder akan membuat akun demo:*
-- **Admin**: `admin@stokcerdas.test` (password: `password`)
-- **Karyawan**: `karyawan@stokcerdas.test` (password: `password`)
+- **Admin**: `admin@stokara.test` (password: `password`)
+- **Karyawan**: `karyawan@stokara.test` (password: `password`)
 
 ### 4. Konfigurasi Google Gemini AI
 Dapatkan API Key gratis di [Google AI Studio](https://aistudio.google.com/app/apikey), lalu atur di `.env`:
