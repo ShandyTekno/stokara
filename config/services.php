@@ -35,13 +35,14 @@ return [
         ],
     ],
 
-        'anthropic' => [
-        'key' => env('ANTHROPIC_API_KEY'),
-        'model' => env('ANTHROPIC_MODEL', 'claude-haiku-5-5'),
-        'timeout' => (int) env('ANTHROPIC_TIMEOUT', 20),
-        'max_tokens' => (int) env('ANTHROPIC_MAX_TOKENS', 1024),
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-3.8-flash'),
+        'timeout' => (int) env('GEMINI_TIMEOUT', 60),
+        'max_tokens' => (int) env('GEMINI_MAX_TOKENS', 1024),
         'rate_per_minute' => (int) env('AI_RATE_PER_MINUTE', 10),
         'daily_limit' => (int) env('AI_DAILY_LIMIT', 100),
+        'analysis_daily_limit' => (int) env('AI_ANALYSIS_DAILY_LIMIT', 20),
     ],
 
 ];

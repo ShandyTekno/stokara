@@ -37,11 +37,11 @@ class AiAssistantTest extends TestCase
 
         Http::preventStrayRequests();
         config([
-            'services.anthropic.key' => null,
-            'services.anthropic.model' => 'claude-haiku-5-5',
-            'services.anthropic.max_tokens' => 1024,
-            'services.anthropic.rate_per_minute' => 100,
-            'services.anthropic.daily_limit' => 0,
+            'services.gemini.key' => null,
+            'services.gemini.model' => 'gemini-2.5-flash',
+            'services.gemini.max_tokens' => 1024,
+            'services.gemini.rate_per_minute' => 100,
+            'services.gemini.daily_limit' => 0,
         ]);
 
         $this->store = Store::factory()->create(['name' => 'Toko Berkah']);
@@ -69,19 +69,27 @@ class AiAssistantTest extends TestCase
 
     private function liveMode(): void
     {
-        config(['services.anthropic.key' => self::SECRET]);
+        config(['services.gemini.key' => self::SECRET]);
     }
 
-    private function fakeAnthropic(string $text = 'Jawaban uji', array $extra = []): void
+    private function fakeGemini(string $text = 'Jawaban uji', array $extra = []): void
     {
-        Http::fake(['api.anthropic.com/*' => Http::response(array_merge([
-            'id' => 'msg_test',
-            'type' => 'message',
-            'role' => 'assistant',
-            'model' => 'claude-haiku-5-5',
-            'content' => [['type' => 'text', 'text' => $text]],
-            'stop_reason' => 'end_turn',
-            'usage' => ['input_tokens' => 120, 'output_tokens' => 30],
+        Http::fake(['generativelanguage.googleapis.com/*' => Http::response(array_merge([
+            'candidates' => [
+                [
+                    'content' => [
+                        'parts' => [
+                            ['text' => $text],
+                        ],
+                        'role' => 'model',
+                    ],
+                    'finishReason' => 'STOP',
+                ],
+            ],
+            'usageMetadata' => [
+                'promptTokenCount' => 120,
+                'candidatesTokenCount' => 30,
+            ],
         ], $extra), 200)]);
     }
 
@@ -153,7 +161,7 @@ class AiAssistantTest extends TestCase
         $this->actingAs($this->admin)->get(route('ai.assistant'))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('mode', 'live')
-                ->where('model', 'claude-haiku-5-5'));
+                ->where('model', 'gemini-2.5-flash'));
     }
 
     public function test_karyawan_and_guest_cannot_use_the_assistant(): void
@@ -271,10 +279,10 @@ class AiAssistantTest extends TestCase
 
     // ------------------------------------------------------------- mode sungguhan
 
-    public function test_live_mode_calls_anthropic_with_store_context_and_saves_reply(): void
+    public function test_live_mode_calls_gemini_with_store_context_and_saves_reply(): void
     {
         $this->liveMode();
-        $this->fakeAnthropic('Stok Minyak Goreng tinggal 5 pcs.');
+        $this->fakeGemini('Stok Minyak Goreng tinggal 5 pcs.');
 
         $other = Store::factory()->create(['name' => 'Toko Pesaing']);
         Product::factory()->habis()->create(['store_id' => $other->id, 'name' => 'Rahasia Pesaing']);
@@ -285,26 +293,25 @@ class AiAssistantTest extends TestCase
         Http::assertSent(function (Request $request) {
             $body = $request->data();
 
-            return $request->url() === 'https://api.anthropic.com/v1/messages'
+            return str_contains($request->url(), 'generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent')
                 && $request->method() === 'POST'
-                && $request->hasHeader('x-api-key', self::SECRET)
-                && $request->hasHeader('anthropic-version', '2023-06-01')
-                && $body['model'] === 'claude-haiku-5-5'
-                && $body['max_tokens'] === 1024
-                && str_contains($body['system'], 'Toko Berkah')
-                && str_contains($body['system'], 'Minyak Goreng')
-                && str_contains($body['system'], 'Garam Halus')
-                && str_contains($body['system'], 'mengarang')
-                && ! str_contains($body['system'], 'Rahasia Pesaing')
-                && ! str_contains($body['system'], self::SECRET)
-                && $body['messages'] === [['role' => 'user', 'content' => 'Barang apa yang stoknya hampir habis?']];
+                && $request->hasHeader('x-goog-api-key', self::SECRET)
+                && $body['generationConfig']['maxOutputTokens'] === 1024
+                && str_contains($body['systemInstruction']['parts'][0]['text'], 'Toko Berkah')
+                && str_contains($body['systemInstruction']['parts'][0]['text'], 'Minyak Goreng')
+                && str_contains($body['systemInstruction']['parts'][0]['text'], 'Garam Halus')
+                && str_contains($body['systemInstruction']['parts'][0]['text'], 'mengarang')
+                && ! str_contains($body['systemInstruction']['parts'][0]['text'], 'Rahasia Pesaing')
+                && ! str_contains($body['systemInstruction']['parts'][0]['text'], self::SECRET)
+                && $body['contents'][0]['role'] === 'user'
+                && $body['contents'][0]['parts'][0]['text'] === 'Barang apa yang stoknya hampir habis?';
         });
 
         $reply = $this->messages()->last();
         $this->assertSame('assistant', $reply->role);
         $this->assertFalse($reply->is_simulation);
         $this->assertSame('Stok Minyak Goreng tinggal 5 pcs.', $reply->content);
-        $this->assertSame('anthropic', $reply->meta['provider']);
+        $this->assertSame('gemini', $reply->meta['provider']);
         $this->assertSame(120, $reply->meta['input_tokens']);
         $this->assertSame(30, $reply->meta['output_tokens']);
     }
@@ -312,7 +319,7 @@ class AiAssistantTest extends TestCase
     public function test_api_key_never_reaches_the_frontend(): void
     {
         $this->liveMode();
-        $this->fakeAnthropic();
+        $this->fakeGemini();
 
         $this->ask('Halo');
         $conversation = AiConversation::withoutGlobalScopes()->firstOrFail();
@@ -327,12 +334,12 @@ class AiAssistantTest extends TestCase
     {
         $this->liveMode();
 
-        $statuses = [401, 403, 404, 429, 500, 529];
+        $statuses = [401, 403, 404, 429, 500, 503];
         $sequence = Http::sequence();
         foreach ($statuses as $status) {
-            $sequence->push(['type' => 'error', 'error' => ['type' => 'x', 'message' => self::SECRET.' detail internal']], $status);
+            $sequence->push(['error' => ['message' => self::SECRET.' detail internal']], $status);
         }
-        Http::fake(['api.anthropic.com/*' => $sequence]);
+        Http::fake(['generativelanguage.googleapis.com/*' => $sequence]);
 
         foreach ($statuses as $status) {
             $response = $this->ask('Halo');
@@ -351,7 +358,7 @@ class AiAssistantTest extends TestCase
     public function test_connection_failure_is_handled(): void
     {
         $this->liveMode();
-        Http::fake(['api.anthropic.com/*' => fn () => throw new ConnectionException('cURL error 28: Operation timed out')]);
+        Http::fake(['generativelanguage.googleapis.com/*' => fn () => throw new ConnectionException('cURL error 28: Operation timed out')]);
 
         $this->ask('Halo')->assertSessionHasErrors('message');
 
@@ -362,7 +369,7 @@ class AiAssistantTest extends TestCase
     public function test_empty_reply_is_treated_as_an_error(): void
     {
         $this->liveMode();
-        $this->fakeAnthropic('', ['content' => [], 'stop_reason' => 'refusal']);
+        $this->fakeGemini('', ['candidates' => []]);
 
         $this->ask('Halo')->assertSessionHasErrors('message');
 
@@ -372,7 +379,19 @@ class AiAssistantTest extends TestCase
     public function test_truncated_reply_gets_a_notice(): void
     {
         $this->liveMode();
-        $this->fakeAnthropic('Jawaban panjang yang terpotong', ['stop_reason' => 'max_tokens']);
+        $this->fakeGemini('Jawaban panjang yang terpotong', [
+            'candidates' => [
+                [
+                    'content' => [
+                        'parts' => [
+                            ['text' => 'Jawaban panjang yang terpotong'],
+                        ],
+                        'role' => 'model',
+                    ],
+                    'finishReason' => 'MAX_TOKENS',
+                ],
+            ],
+        ]);
 
         $this->ask('Halo');
 
@@ -382,7 +401,7 @@ class AiAssistantTest extends TestCase
     public function test_follow_up_sends_conversation_history_in_order(): void
     {
         $this->liveMode();
-        $this->fakeAnthropic('Jawaban pertama');
+        $this->fakeGemini('Jawaban pertama');
 
         $this->ask('Barang apa yang stoknya hampir habis?');
         $conversation = AiConversation::withoutGlobalScopes()->firstOrFail();
@@ -390,10 +409,10 @@ class AiAssistantTest extends TestCase
 
         $second = Http::recorded()->last()[0];
         $this->assertSame([
-            ['role' => 'user', 'content' => 'Barang apa yang stoknya hampir habis?'],
-            ['role' => 'assistant', 'content' => 'Jawaban pertama'],
-            ['role' => 'user', 'content' => 'Dan yang sudah habis?'],
-        ], $second->data()['messages']);
+            ['role' => 'user', 'parts' => [['text' => 'Barang apa yang stoknya hampir habis?']]],
+            ['role' => 'model', 'parts' => [['text' => 'Jawaban pertama']]],
+            ['role' => 'user', 'parts' => [['text' => 'Dan yang sudah habis?']]],
+        ], $second->data()['contents']);
 
         $this->assertDatabaseCount('ai_conversations', 1);
         $this->assertCount(4, $this->messages());
@@ -405,20 +424,20 @@ class AiAssistantTest extends TestCase
         $conversation = AiConversation::withoutGlobalScopes()->firstOrFail();
 
         $this->liveMode();
-        $this->fakeAnthropic();
+        $this->fakeGemini();
         $this->ask('Berapa penjualan hari ini?', $conversation->id);
 
-        $sent = Http::recorded()->last()[0]->data()['messages'];
+        $sent = Http::recorded()->last()[0]->data()['contents'];
         $this->assertCount(1, $sent);
         $this->assertSame('user', $sent[0]['role']);
-        $this->assertSame("Barang apa yang stoknya hampir habis?\n\nBerapa penjualan hari ini?", $sent[0]['content']);
-        $this->assertStringNotContainsString('[SIMULASI]', $sent[0]['content']);
+        $this->assertSame("Barang apa yang stoknya hampir habis?\n\nBerapa penjualan hari ini?", $sent[0]['parts'][0]['text']);
+        $this->assertStringNotContainsString('[SIMULASI]', $sent[0]['parts'][0]['text']);
     }
 
     public function test_history_sent_to_the_provider_is_trimmed_and_alternating(): void
     {
         $this->liveMode();
-        $this->fakeAnthropic();
+        $this->fakeGemini();
 
         $conversation = $this->conversation($this->admin);
         for ($i = 1; $i <= 30; $i++) {
@@ -427,13 +446,13 @@ class AiAssistantTest extends TestCase
 
         $this->ask('Pesan baru', $conversation->id)->assertSessionHasNoErrors();
 
-        $sent = Http::recorded()->last()[0]->data()['messages'];
+        $sent = Http::recorded()->last()[0]->data()['contents'];
 
         $this->assertCount(11, $sent); // 12 terakhir, lalu pesan assistant di awal dibuang
         $this->assertSame('user', $sent[0]['role']);
-        $this->assertSame('Pesan baru', end($sent)['content']);
+        $this->assertSame('Pesan baru', end($sent)['parts'][0]['text']);
         foreach ($sent as $i => $message) {
-            $this->assertSame($i % 2 === 0 ? 'user' : 'assistant', $message['role']);
+            $this->assertSame($i % 2 === 0 ? 'user' : 'model', $message['role']);
         }
     }
 
@@ -467,7 +486,7 @@ class AiAssistantTest extends TestCase
 
     public function test_per_minute_rate_limit(): void
     {
-        config(['services.anthropic.rate_per_minute' => 2]);
+        config(['services.gemini.rate_per_minute' => 2]);
 
         $this->ask('Halo 1')->assertSessionHasNoErrors();
         $this->ask('Halo 2')->assertSessionHasNoErrors();
@@ -479,9 +498,9 @@ class AiAssistantTest extends TestCase
 
     public function test_daily_limit_applies_to_live_mode_only(): void
     {
-        config(['services.anthropic.daily_limit' => 1]);
+        config(['services.gemini.daily_limit' => 1]);
         $this->liveMode();
-        $this->fakeAnthropic();
+        $this->fakeGemini();
 
         $this->ask('Halo 1')->assertSessionHasNoErrors();
         $this->ask('Halo 2')->assertSessionHasErrors('message');
@@ -489,7 +508,7 @@ class AiAssistantTest extends TestCase
         $this->assertCount(2, $this->messages()); // hanya pasangan pertama
 
         // Mode demo tidak menimbulkan biaya, jadi tidak dibatasi.
-        config(['services.anthropic.key' => null]);
+        config(['services.gemini.key' => null]);
         $this->ask('Halo 3')->assertSessionHasNoErrors();
         $this->ask('Halo 4')->assertSessionHasNoErrors();
     }

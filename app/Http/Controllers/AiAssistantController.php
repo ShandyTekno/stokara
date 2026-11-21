@@ -47,7 +47,7 @@ class AiAssistantController extends Controller
         $data = $request->validated();
 
         $limiterKey = 'ai-chat:'.$user->id;
-        $perMinute = (int) config('services.anthropic.rate_per_minute', 10);
+        $perMinute = (int) config('services.gemini.rate_per_minute', 10);
         if ($perMinute > 0 && RateLimiter::tooManyAttempts($limiterKey, $perMinute)) {
             $wait = RateLimiter::availableIn($limiterKey);
 
@@ -163,7 +163,7 @@ class AiAssistantController extends Controller
 
         return Inertia::render('AiAssistant/Index', [
             'mode' => $live ? 'live' : 'demo',
-            'model' => $live ? config('services.anthropic.model') : null,
+            'model' => $live ? config('services.gemini.model') : null,
             'conversations' => $conversations,
             'conversation' => $conversation ? ['id' => $conversation->id, 'title' => $conversation->title] : null,
             'messages' => $messages,

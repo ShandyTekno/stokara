@@ -15,17 +15,17 @@ class AiAssistantService
 
     public function isLive(): bool
     {
-        return filled(config('services.anthropic.key'));
+        return filled(config('services.gemini.key'));
     }
 
     public function provider(): AiProvider
     {
         if ($this->isLive()) {
-            return new AnthropicProvider(
-                (string) config('services.anthropic.key'),
-                (string) config('services.anthropic.model'),
-                (int) config('services.anthropic.timeout', 20),
-                (int) config('services.anthropic.max_tokens', 1024),
+            return new GeminiProvider(
+                (string) config('services.gemini.key'),
+                (string) config('services.gemini.model'),
+                (int) config('services.gemini.timeout', 30),
+                (int) config('services.gemini.max_tokens', 1024),
             );
         }
 
@@ -35,7 +35,7 @@ class AiAssistantService
     /** Batas harian hanya berlaku untuk jawaban AI sungguhan (yang menimbulkan biaya). */
     public function dailyLimitReached(int $storeId): bool
     {
-        $limit = (int) config('services.anthropic.daily_limit', 100);
+        $limit = (int) config('services.gemini.daily_limit', 100);
         if ($limit <= 0) {
             return false;
         }

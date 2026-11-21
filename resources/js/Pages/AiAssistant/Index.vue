@@ -40,6 +40,7 @@ function send(text) {
 
     form.post(route('ai.assistant.send'), {
         preserveScroll: true,
+        showProgress: false,
         onSuccess: () => form.reset('message'),
         onFinish: () => (pending.value = null),
     });
@@ -85,7 +86,7 @@ function confirmDelete() {
             >
                 <strong>Mode demo.</strong> API AI belum dikonfigurasi, jadi jawaban di bawah adalah
                 <strong>simulasi</strong> yang dibuat dari data nyata toko Anda dengan aturan sederhana, bukan AI
-                sungguhan. Isi <code>ANTHROPIC_API_KEY</code> di file <code>.env</code> lalu jalankan
+                sungguhan. Isi <code>GEMINI_API_KEY</code> di file <code>.env</code> lalu jalankan
                 <code>php artisan config:clear</code> untuk mengaktifkan AI.
             </div>
 
@@ -187,8 +188,31 @@ function confirmDelete() {
                             </div>
                         </div>
                         <div v-if="form.processing" class="flex justify-start">
-                            <div class="animate-pulse rounded-2xl border bg-gray-50 px-4 py-3 text-sm text-gray-500">
-                                Menyusun jawaban dari data toko…
+                            <div class="flex items-center gap-3 rounded-2xl border border-blue-100 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm">
+                                <svg
+                                    class="h-5 w-5 animate-spin text-blue-900"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        class="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        stroke-width="4"
+                                    ></circle>
+                                    <path
+                                        class="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                    ></path>
+                                </svg>
+                                <div class="flex flex-col">
+                                    <span class="font-medium text-blue-900">AI sedang berpikir…</span>
+                                    <span class="text-xs text-gray-500">Menganalisis data stok &amp; menyusun jawaban</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -208,15 +232,36 @@ function confirmDelete() {
                             <button
                                 type="submit"
                                 :disabled="form.processing || !form.message.trim()"
-                                class="rounded-md bg-blue-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
+                                class="inline-flex items-center gap-2 rounded-md bg-blue-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
                             >
-                                Kirim
+                                <svg
+                                    v-if="form.processing"
+                                    class="h-4 w-4 animate-spin text-white"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        class="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        stroke-width="4"
+                                    ></circle>
+                                    <path
+                                        class="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                    ></path>
+                                </svg>
+                                <span>{{ form.processing ? 'Memproses…' : 'Kirim' }}</span>
                             </button>
                         </div>
                         <p class="mt-2 text-xs text-gray-500">
                             <template v-if="mode === 'live'">
                                 Untuk menjawab, ringkasan data toko (nama barang, stok, dan angka penjualan) dikirim ke
-                                Anthropic. Email dan kata sandi tidak dikirim. AI bisa keliru, jadi cek angka penting di
+                                Google Gemini. Email dan kata sandi tidak dikirim. AI bisa keliru, jadi cek angka penting di
                                 menu Laporan.
                             </template>
                             <template v-else>

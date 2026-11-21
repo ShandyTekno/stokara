@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AiAssistantController;
+use App\Http\Controllers\AnalysisController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MonitoringController;
@@ -101,6 +102,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/asisten-ai/kirim', [AiAssistantController::class, 'send'])->name('ai.assistant.send');
         Route::get('/asisten-ai/{conversation}', [AiAssistantController::class, 'show'])->name('ai.assistant.show');
         Route::delete('/asisten-ai/{conversation}', [AiAssistantController::class, 'destroy'])->name('ai.assistant.destroy');
+
+        // Analisis AI (rekomendasi persediaan)
+        Route::get('/analisis-ai', [AnalysisController::class, 'index'])->name('ai.analysis');
+        Route::post('/analisis-ai/jelaskan', [AnalysisController::class, 'explain'])->name('ai.analysis.explain');
+        Route::get('/analisis-ai/pdf', [AnalysisController::class, 'pdf'])->name('ai.analysis.pdf');
+        Route::get('/analisis-ai/excel', [AnalysisController::class, 'excel'])->name('ai.analysis.excel');
     });
 
     Route::get('/barang/{product}', [ProductController::class, 'show'])->name('products.show');

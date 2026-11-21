@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 class DemoProvider implements AiProvider
 {
     public const LABEL = '[SIMULASI] Jawaban ini dibuat oleh mode demo dari data toko Anda dengan aturan sederhana. Ini bukan AI sungguhan.';
-    public const FOOTER = 'Untuk mengaktifkan AI sungguhan, isi ANTHROPIC_API_KEY di file .env lalu jalankan php artisan config:clear.';
+    public const FOOTER = 'Untuk mengaktifkan AI sungguhan, isi GEMINI_API_KEY di file .env lalu jalankan php artisan config:clear.';
 
     public function reply(string $system, array $messages, array $context): AiReply
     {
