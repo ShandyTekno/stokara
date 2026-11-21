@@ -98,7 +98,7 @@ class HardeningTest extends TestCase
 
         $this->assertDatabaseHas('users', ['email' => 'admin@stokara.test', 'role' => 'admin']);
         $this->assertDatabaseHas('users', ['email' => 'karyawan@stokara.test', 'role' => 'karyawan']);
-        $this->assertDatabaseCount('products', 12);
+        $this->assertDatabaseCount('products', 27);
     }
 
     public function test_demo_seeder_is_skipped_in_production(): void

@@ -77,14 +77,14 @@ class Product extends Model
 
     protected function photoUrl(): Attribute
     {
-        return Attribute::get(fn () => $this->photo ? '/storage/'.$this->photo : null);
+        return Attribute::get(fn () => $this->photo ? asset('storage/'.$this->photo) : null);
     }
 
     public function scopeSearch(Builder $query, ?string $term): Builder
     {
         return $query->when($term, fn (Builder $q) => $q->where(
-            fn (Builder $q) => $q->where('name', 'like', "%{$term}%")
-                ->orWhere('code', 'like', "%{$term}%")
+            fn (Builder $q) => $q->where('products.name', 'like', "%{$term}%")
+                ->orWhere('products.code', 'like', "%{$term}%")
         ));
     }
 

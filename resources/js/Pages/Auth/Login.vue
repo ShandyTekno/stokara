@@ -29,49 +29,77 @@ const submit = () => {
     <GuestLayout>
         <Head title="Masuk" />
 
-        <h1 class="text-2xl font-bold text-blue-900">Masuk ke Stokara</h1>
-        <p class="mt-1 text-sm text-gray-500">Kelola Stok, Kendalikan Bisnis.</p>
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Masuk ke Akun</h1>
+            <p class="mt-1 text-sm text-slate-500">Masukkan kredensial Anda untuk mengelola toko.</p>
+        </div>
 
-        <div v-if="status" class="mt-4 rounded-md bg-green-50 p-3 text-sm text-green-700">
+        <div v-if="status" class="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-medium text-emerald-800">
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit" class="mt-8 space-y-5">
+        <form @submit.prevent="submit" class="space-y-4">
             <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <input id="email" v-model="form.email" type="email" required autofocus autocomplete="username"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-800 focus:ring-blue-800" />
-                <InputError class="mt-2" :message="form.errors.email || sessionError" />
+                <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
+                <input
+                    id="email"
+                    v-model="form.email"
+                    type="email"
+                    required
+                    autofocus
+                    autocomplete="username"
+                    class="mt-1.5 block w-full rounded-xl border-slate-300 text-sm shadow-xs transition-colors focus:border-blue-600 focus:ring-blue-600"
+                    placeholder="nama@email.com"
+                />
+                <InputError class="mt-1.5" :message="form.errors.email || sessionError" />
             </div>
 
             <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">Kata sandi</label>
-                <input id="password" v-model="form.password" type="password" required autocomplete="current-password"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-800 focus:ring-blue-800" />
-                <InputError class="mt-2" :message="form.errors.password" />
+                <label for="password" class="block text-sm font-medium text-slate-700">Kata Sandi</label>
+                <input
+                    id="password"
+                    v-model="form.password"
+                    type="password"
+                    required
+                    autocomplete="current-password"
+                    class="mt-1.5 block w-full rounded-xl border-slate-300 text-sm shadow-xs transition-colors focus:border-blue-600 focus:ring-blue-600"
+                    placeholder="••••••••"
+                />
+                <InputError class="mt-1.5" :message="form.errors.password" />
             </div>
 
-            <div class="flex items-center justify-between">
-                <label class="flex items-center gap-2 text-sm text-gray-600">
-                    <input v-model="form.remember" type="checkbox"
-                        class="rounded border-gray-300 text-blue-900 focus:ring-blue-800" />
-                    Ingat saya
+            <div class="flex items-center justify-between pt-1">
+                <label class="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+                    <input
+                        v-model="form.remember"
+                        type="checkbox"
+                        class="rounded-md border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span>Ingat saya</span>
                 </label>
-                <Link v-if="canResetPassword" :href="route('password.request')"
-                    class="text-sm text-blue-800 hover:underline">
+                <Link
+                    v-if="canResetPassword"
+                    :href="route('password.request')"
+                    class="text-xs font-semibold text-blue-700 hover:text-blue-900 hover:underline"
+                >
                     Lupa kata sandi?
                 </Link>
             </div>
 
-            <button type="submit" :disabled="form.processing"
-                class="w-full rounded-md bg-blue-900 px-4 py-2.5 font-semibold text-white hover:bg-blue-800 disabled:opacity-50">
-                Masuk
+            <button
+                type="submit"
+                :disabled="form.processing"
+                class="w-full mt-2 rounded-xl bg-gradient-to-r from-blue-700 to-indigo-700 py-3 px-4 text-sm font-bold text-white shadow-md shadow-blue-600/20 hover:from-blue-800 hover:to-indigo-800 active:scale-[0.99] transition-all disabled:opacity-50"
+            >
+                {{ form.processing ? 'Memproses...' : 'Masuk Sekarang' }}
             </button>
         </form>
 
-        <p class="mt-6 text-center text-sm text-gray-600">
-            Belum punya toko?
-            <Link :href="route('register')" class="font-medium text-blue-800 hover:underline">Daftar sebagai pemilik toko</Link>
-        </p>
+        <div class="mt-6 border-t border-slate-100 pt-5 text-center text-xs text-slate-500">
+            Belum punya akun toko?
+            <Link :href="route('register')" class="ml-1 font-semibold text-blue-700 hover:text-blue-900 hover:underline">
+                Daftar sebagai pemilik toko
+            </Link>
+        </div>
     </GuestLayout>
 </template>

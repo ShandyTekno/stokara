@@ -12,6 +12,19 @@ class ProductRequest extends FormRequest
         return $this->user()?->isAdmin() ?? false;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if (empty($this->code) && ! empty($this->name)) {
+            $this->merge([
+                'code' => app(\App\Services\ProductService::class)->generateCode(
+                    (string) $this->name,
+                    $this->user()->store_id,
+                    $this->route('product')?->id
+                ),
+            ]);
+        }
+    }
+
     public function rules(): array
     {
         $storeId = $this->user()->store_id;

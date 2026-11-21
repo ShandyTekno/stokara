@@ -1,10 +1,12 @@
 <script setup>
+import { ref } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import StockBadge from '@/Components/StockBadge.vue';
 import { formatNumber, formatRupiah } from '@/utils/format';
 
 defineProps({ product: Object, movements: Array, can: Object });
+const imageFailed = ref(false);
 </script>
 
 <template>
@@ -27,9 +29,15 @@ defineProps({ product: Object, movements: Array, can: Object });
                 </Link>
             </div>
 
-            <section class="flex flex-col gap-6 rounded-xl bg-white p-6 shadow-sm sm:flex-row">
-                <img v-if="product.photo_url" :src="product.photo_url" :alt="product.name" class="h-40 w-40 rounded-xl border object-cover" />
-                <div v-else class="flex h-40 w-40 items-center justify-center rounded-xl bg-blue-50 text-4xl font-bold text-blue-900">
+            <section class="flex flex-col gap-6 rounded-2xl border border-slate-100 bg-white p-6 shadow-xs sm:flex-row">
+                <img
+                    v-if="product.photo_url && !imageFailed"
+                    :src="product.photo_url"
+                    :alt="product.name"
+                    class="h-40 w-40 rounded-2xl border border-slate-200 object-cover shadow-xs"
+                    @error="imageFailed = true"
+                />
+                <div v-else class="flex h-40 w-40 items-center justify-center rounded-2xl bg-blue-50 text-4xl font-bold text-blue-700 ring-1 ring-blue-700/10 shadow-xs">
                     {{ product.name.charAt(0).toUpperCase() }}
                 </div>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -30,6 +31,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user()?->loadMissing('store');
+        $store = $user?->store ?? Store::first();
 
         return [
             ...parent::share($request),
@@ -45,6 +47,15 @@ class HandleInertiaRequests extends Middleware
                         'name' => $user->store->name,
                     ] : null,
                 ] : null,
+            ],
+            'site' => [
+                'app_name' => $store?->app_name ?: config('app.name', 'STOKARA'),
+                'store_name' => $store?->name ?: 'Toko',
+                'tagline' => $store?->tagline ?: 'Sistem Manajemen Stok & Kasir Modern',
+                'phone' => $store?->phone,
+                'address' => $store?->address,
+                'logo_url' => $store?->logo_url,
+                'settings' => $store ? $store->resolvedSettings() : Store::DEFAULT_SETTINGS,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

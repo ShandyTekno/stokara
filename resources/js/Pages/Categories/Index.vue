@@ -76,41 +76,85 @@ const input =
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-lg font-semibold text-blue-900">Kategori</h2>
+            <div class="flex items-center gap-2">
+                <h2 class="text-lg font-bold tracking-tight text-slate-900">Kategori Barang</h2>
+                <span class="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 ring-1 ring-blue-700/10">
+                    Master Data
+                </span>
+            </div>
         </template>
 
-        <div class="space-y-4">
+        <div class="space-y-5">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <input v-model="search" type="search" placeholder="Cari kategori…" :class="[input, 'sm:max-w-xs']" />
-                <button type="button" class="rounded-md bg-blue-900 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800" @click="openCreate">
-                    + Tambah Kategori
+                <input
+                    v-model="search"
+                    type="search"
+                    placeholder="Cari kategori…"
+                    class="w-full rounded-xl border-slate-300 text-sm shadow-xs focus:border-blue-600 focus:ring-blue-600 sm:max-w-xs"
+                />
+                <button
+                    type="button"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-700 to-indigo-700 px-4 py-2.5 text-center text-sm font-bold text-white shadow-sm shadow-blue-500/20 transition-all hover:from-blue-800 hover:to-indigo-800 active:scale-[0.98]"
+                    @click="openCreate"
+                >
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Tambah Kategori
                 </button>
             </div>
 
-            <div class="overflow-x-auto rounded-xl bg-white shadow-sm">
+            <div class="modern-table-box">
                 <table class="min-w-full text-sm">
-                    <thead class="border-b bg-gray-50 text-left text-xs uppercase text-gray-500">
+                    <thead class="border-b border-slate-100 bg-slate-50/80 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                         <tr>
-                            <th class="px-4 py-3">Nama</th>
-                            <th class="px-4 py-3">Deskripsi</th>
-                            <th class="px-4 py-3 text-right">Jumlah barang</th>
-                            <th class="px-4 py-3 text-right">Aksi</th>
+                            <th class="px-5 py-3.5">Nama Kategori</th>
+                            <th class="px-5 py-3.5">Deskripsi</th>
+                            <th class="px-5 py-3.5 text-right">Jumlah Barang</th>
+                            <th class="px-5 py-3.5 text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y">
+                    <tbody class="divide-y divide-slate-100">
                         <tr v-if="!categories.data.length">
-                            <td colspan="4" class="px-4 py-10 text-center text-gray-500">
-                                {{ filters.search ? 'Tidak ada kategori yang cocok.' : 'Belum ada kategori.' }}
+                            <td colspan="4" class="px-5 py-12 text-center text-slate-400">
+                                {{ filters.search ? 'Tidak ada kategori yang cocok dengan pencarian.' : 'Belum ada data kategori.' }}
                             </td>
                         </tr>
-                        <tr v-for="c in categories.data" :key="c.id" class="hover:bg-gray-50">
-                            <td class="px-4 py-3 font-medium text-gray-900">{{ c.name }}</td>
-                            <td class="px-4 py-3 text-gray-600">{{ c.description ?? '—' }}</td>
-                            <td class="px-4 py-3 text-right">{{ formatNumber(c.products_count) }}</td>
-                            <td class="px-4 py-3">
-                                <div class="flex justify-end gap-3">
-                                    <button type="button" class="text-blue-800 hover:underline" @click="openEdit(c)">Ubah</button>
-                                    <button type="button" class="text-red-600 hover:underline" @click="deleting = c">Hapus</button>
+                        <tr
+                            v-for="c in categories.data"
+                            :key="c.id"
+                            class="group table-row-modern"
+                        >
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-700 font-bold text-xs ring-1 ring-blue-700/10">
+                                        #
+                                    </div>
+                                    <span class="font-bold text-slate-800 group-hover:text-blue-700 transition-colors">{{ c.name }}</span>
+                                </div>
+                            </td>
+                            <td class="px-5 py-3.5 text-slate-600 text-xs">{{ c.description || '—' }}</td>
+                            <td class="px-5 py-3.5 text-right">
+                                <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700">
+                                    {{ formatNumber(c.products_count) }} produk
+                                </span>
+                            </td>
+                            <td class="px-5 py-3.5 text-right">
+                                <div class="flex justify-end gap-2">
+                                    <button
+                                        type="button"
+                                        class="rounded-lg border border-blue-200 bg-blue-50/50 px-2.5 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-100/60 transition-colors"
+                                        @click="openEdit(c)"
+                                    >
+                                        Ubah
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="rounded-lg border border-rose-200 bg-rose-50/50 px-2.5 py-1 text-xs font-semibold text-rose-700 hover:bg-rose-100/60 transition-colors"
+                                        @click="deleting = c"
+                                    >
+                                        Hapus
+                                    </button>
                                 </div>
                             </td>
                         </tr>

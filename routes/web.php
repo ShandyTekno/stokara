@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StockInController;
 use App\Http\Controllers\StockOutController;
 use App\Http\Controllers\SupplierController;
@@ -50,6 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('role:admin')->group(function () {
         // Barang (harus sebelum /barang/{product})
         Route::get('/barang/tambah', [ProductController::class, 'create'])->name('products.create');
+        Route::get('/barang/generate-code', [ProductController::class, 'generateCode'])->name('products.generate-code');
         Route::post('/barang', [ProductController::class, 'store'])->name('products.store');
         Route::get('/barang/{product}/ubah', [ProductController::class, 'edit'])->name('products.edit');
         Route::put('/barang/{product}', [ProductController::class, 'update'])->name('products.update');
@@ -99,6 +101,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/analisis-ai/jelaskan', [AnalysisController::class, 'explain'])->name('ai.analysis.explain');
         Route::get('/analisis-ai/pdf', [AnalysisController::class, 'pdf'])->name('ai.analysis.pdf');
         Route::get('/analisis-ai/excel', [AnalysisController::class, 'excel'])->name('ai.analysis.excel');
+
+        // Pengaturan website & tampilan
+        Route::get('/pengaturan', [SettingController::class, 'edit'])->name('settings.edit');
+        Route::post('/pengaturan', [SettingController::class, 'update'])->name('settings.update');
+        Route::post('/pengaturan/reset', [SettingController::class, 'reset'])->name('settings.reset');
     });
 
     Route::get('/barang/{product}', [ProductController::class, 'show'])->name('products.show');
