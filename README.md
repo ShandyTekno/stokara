@@ -1,58 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# StokCerdas AI
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![PHP Version](https://img.shields.io/badge/PHP-8.3%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
+[![Vue.js](https://img.shields.io/badge/Vue.js-3.x-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
+[![Inertia.js](https://img.shields.io/badge/Inertia.js-2.x-9553E9?logo=inertia&logoColor=white)](https://inertiajs.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Tests Passing](https://img.shields.io/badge/Tests-248%20Passed-brightgreen)](tests/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## About Laravel
+**StokCerdas AI** adalah sistem manajemen inventaris, kasir (POS), dan analisis persediaan pintar berbasis web untuk toko dan UMKM retail. Dibangun dengan integrasi **Google Gemini AI**, aplikasi ini membantu pemilik toko memantau pergerakan stok, mengotomatisasi kasir, menghitung kebutuhan restock, serta berdialog langsung dengan asisten AI mengenai kondisi persediaan toko.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🌟 Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- 🏪 **Arsitektur Multi-Tenant Mandiri**: Setiap toko memiliki data yang terisolasi secara ketat (*data isolation*) melalui global scope Eloquent dan proteksi `store_id`.
+- 👥 **Role-Based Access Control (RBAC)**:
+  - **Admin / Pemilik Toko**: Akses penuh ke master data, manajemen pengguna/karyawan, laporan laba-rugi, ekspor, dan modul AI.
+  - **Karyawan / Kasir**: Akses kasir (POS), riwayat penjualan, pencatatan barang masuk/keluar, dan pengecekan stok barang.
+- 📦 **Manajemen Barang & Konversi Kemasan**: Mendukung pencatatan stok dalam satuan terkecil (pcs, kg, dll.) dengan konversi otomatis dari kemasan grosir/dus (`units_per_pack`).
+- 🛒 **Kasir Cepat & Cetak Struk (POS)**: Antarmuka kasir responsif dengan pencarian instan, kalkulasi kembalian, dukungan metode pembayaran tunai & QRIS, serta fitur cetak struk via browser print.
+- 📈 **Buku Besar Stok (*Stock Movements*)**: Setiap penambahan, pengurangan, penjualan, atau penyesuaian dicatat secara mutlak dalam audit log persediaan.
+- ⚠️ **Monitoring Stok Kritis**: Dashboard peringatan otomatis untuk barang yang sudah habis, mendekati batas minimum stok, dan barang lambat laku (*dead stock*).
+- 📊 **Laporan & Ekspor Lengkap**: Rekap penjualan harian, mingguan, bulanan, margin keuntungan kotor, serta ekspor file dalam format **PDF** dan **Excel (.xlsx)**.
+- 🤖 **AI Stock Assistant**: Chatbot asisten bisnis interaktif berbasis **Google Gemini** (`gemini-flash-lite-latest`) yang membaca ringkasan data toko aktual dan dilengkapi animasi loading berputar (*circular spinner*).
+- 🧠 **Analisis & Rekomendasi Persediaan AI**: Proyeksi sisa hari stok barang berdasarkan riwayat kecepatan penjualan, rekomendasi jumlah pesanan ulang (*restock*), dan penjelasan naratif otomatis dari AI.
+- 🛡️ **Hardening & Keamanan Produksi**: Dilengkapi header keamanan (`nosniff`, `SAMEORIGIN`, `strict-origin-when-cross-origin`, `Permissions-Policy`), rate limiting registrasi, serta pencegahan otomatis N+1 query lazy loading.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🛠️ Tech Stack
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Backend**: PHP 8.3+, Laravel 12
+- **Frontend**: Vue 3 (Composition API), Inertia.js v2, Tailwind CSS, Heroicons
+- **Database**: SQLite (default lokal/testing) atau MySQL 8.0+
+- **AI Engine**: Google Gemini API REST (`gemini-flash-lite-latest`), dilengkapi mode simulasi demo lokal (*fallback*) jika API key belum diatur.
+- **Reporting**: DomPDF (ekspor PDF), Laravel Excel / PhpSpreadsheet (ekspor Excel)
+- **Pengujian**: PHPUnit 12 (248 tests, 100% green)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## 🚀 Panduan Memulai Cepat
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+### 1. Klon Repositori & Pasang Dependensi
 ```bash
-composer require laravel/boost --dev
+git clone https://github.com/username/stokcerdas-ai.git
+cd stokcerdas-ai
 
-php artisan boost:install
+composer install
+npm install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Konfigurasi Lingkungan
+Salin berkas `.env.example` menjadi `.env` lalu buat application key:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## Contributing
+### 3. Migrasi & Data Awal (Demo)
+Jalankan migrasi database beserta seeder katalog demo:
+```bash
+php artisan migrate --seed
+```
+*Seeder akan membuat akun demo:*
+- **Admin**: `admin@stokcerdas.test` (password: `password`)
+- **Karyawan**: `karyawan@stokcerdas.test` (password: `password`)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4. Konfigurasi Google Gemini AI
+Dapatkan API Key gratis di [Google AI Studio](https://aistudio.google.com/app/apikey), lalu atur di `.env`:
+```env
+GEMINI_API_KEY=AIzaSy...
+GEMINI_MODEL=gemini-flash-lite-latest
+GEMINI_TIMEOUT=60
+GEMINI_MAX_TOKENS=1024
+```
+*(Bila `GEMINI_API_KEY` dikosongkan, aplikasi otomatis berjalan dalam **Mode Demo** berbasis simulasi lokal tanpa error).*
 
-## Code of Conduct
+### 5. Build Aset & Jalankan Server
+```bash
+npm run build
+php artisan serve
+```
+Buka aplikasi di peramban: `http://localhost:8000`
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 🧪 Pengujian Otomatis (Tests)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Proyek ini memiliki cakupan pengujian menyeluruh (248 automated tests):
+```bash
+php artisan test
+```
 
-## License
+Uji spesifik untuk modul keamanan dan pembatasan akses:
+```bash
+php artisan test tests/Feature/HardeningTest.php
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 📚 Dokumentasi Terperinci
+
+Dokumentasi lengkap proyek dapat dibaca pada folder [`docs/`](docs/):
+- 📋 [**Product Requirements Document (PRD.md)**](PRD.md) - Spesifikasi visi, ruang lingkup, dan kebutuhan produk.
+- 🗄️ [**Dokumentasi Database (docs/database.md)**](docs/database.md) - Skema tabel, diagram relasi ERD, dan aturan integritas data.
+- 🎯 [**Panduan Fitur (docs/fitur.md)**](docs/fitur.md) - Rincian alur kerja setiap fitur dari kasir, stok, hingga AI.
+- 💻 [**Panduan Instalasi & Deployment (docs/instalasi.md)**](docs/instalasi.md) - Langkah instalasi lokal, konfigurasi server produksi, dan troubleshooting.
+
+---
+
+## 📄 Lisensi
+
+Proyek ini dilisensikan di bawah [Lisensi MIT](LICENSE).
